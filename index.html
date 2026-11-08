@@ -122,12 +122,11 @@ const initial=n=>(n.trim().split(/\s+/).pop()||"?")[0].toUpperCase();
 const hue=n=>[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%360;
 const given=n=>n.trim().split(/\s+/).pop();
 
-
 function render(){
  save();const a=document.getElementById("app"),c=cls();
  let h=`<header class="top"><div><h1>📒 Sổ ghi chú lớp học</h1><p class="sub">Mỗi học sinh bắt đầu tháng với ${BASE} điểm. Chạm + / − để ghi ngay.</p></div><button class="btn pri" data-a="newClass">+ Thêm lớp</button></header>`;
  if(!S.classes.length){a.innerHTML=h+`<div class="empty"><h2>Bắt đầu bằng việc tạo lớp đầu tiên</h2><p>Ví dụ: T-LV2-JL1</p><button class="btn pri" data-a="newClass">Tạo lớp</button></div>`;return}
- h+=`<nav class="tabs" role="tablist">${S.classes.map(x=>`<button class="tab" role="tab" aria-selected="${x.id===S.cur}" data-a="pick" data-id="x.id">{esc(x.name)}</button>`).join("")}</nav>`;
+ h+=`<nav class="tabs" role="tablist">${S.classes.map(x=>`<button class="tab" role="tab" aria-selected="${x.id===S.cur}" data-a="pick" data-id="${x.id}">${esc(x.name)}</button>`).join("")}</nav>`;
  const rows=c.students.map(st=>({st,...verdict(c,st.id,S.month)}));
  const q=S.q.toLowerCase();
  let list=rows.filter(r=>r.st.name.toLowerCase().includes(q));
@@ -136,52 +135,50 @@ function render(){
  const avg=rows.length?(rows.reduce((p,r)=>p+r.s,0)/rows.length).toFixed(1):"–";
  h+=`<div class="bar"><div class="month"><button data-a="mo" data-n="-1" aria-label="Tháng trước">‹</button><b>${mlabel(S.month)}</b><button data-a="mo" data-n="1" aria-label="Tháng sau">›</button></div>
  <input type="text" id="q" placeholder="Tìm học sinh…" value="${esc(S.q)}" aria-label="Tìm học sinh">
- <select id="sort" aria-label="Sắp xếp"><option value="name"S.sort==="name"?"selected":"">Theotên</option><optionvalue="stt"{S.sort==="stt"?" selected":""}>Theo thứ tự nhập</option><option value="hi"S.sort==="hi"?"selected":"">Điểmcao→thấp</option><optionvalue="lo"{S.sort==="lo"?" selected":""}>Điểm thấp → cao</option></select>
+ <select id="sort" aria-label="Sắp xếp"><option value="name"${S.sort==="name"?" selected":""}>Theo tên</option><option value="stt"${S.sort==="stt"?" selected":""}>Theo thứ tự nhập</option><option value="hi"${S.sort==="hi"?" selected":""}>Điểm cao → thấp</option><option value="lo"${S.sort==="lo"?" selected":""}>Điểm thấp → cao</option></select>
  <span class="sp"></span><button class="btn" data-a="addStu">+ Học sinh</button><button class="btn pri" data-a="summary">Tổng kết tháng</button><button class="btn" data-a="manage" aria-label="Quản lý lớp">⋯</button></div>`;
- h+=`<section class="stats"><div class="stat"><b>rows.length</b><span>họcsinh</span></div><divclass="stat"><b>{avg}</b><span>điểm trung bình</span></div><div class="stat"><b>rows.filter(r=>r.t.b>0).length</b><span>đượccộngđiểmthưởng</span></div><divclass="statalert"><b>{rows.filter(r=>r.pa).length}</b><span>cần báo phụ huynh</span></div></section>`;
+ h+=`<section class="stats"><div class="stat"><b>${rows.length}</b><span>học sinh</span></div><div class="stat"><b>${avg}</b><span>điểm trung bình</span></div><div class="stat"><b>${rows.filter(r=>r.t.b>0).length}</b><span>được cộng điểm thưởng</span></div><div class="stat alert"><b>${rows.filter(r=>r.pa).length}</b><span>cần báo phụ huynh</span></div></section>`;
  if(!rows.length)h+=`<div class="empty"><h2>Lớp chưa có học sinh</h2><p>Dán cả danh sách, mỗi dòng một tên.</p><button class="btn pri" data-a="addStu">Thêm học sinh</button></div>`;
  else h+=`<div class="grid">${list.map(r=>card(r)).join("")}</div>`;
  a.innerHTML=h;
 }
 function card(r){const n=r.st.name;
- return `<article class="st"><button class="who" data-a="open" data-id="r.st.id"><spanclass="av"style="--h:{hue(n)}">esc(initial(n))</span><spanstyle="min-width:0"><b>{esc(n)}</b><span class="badge r.t.tone">{r.pa?"Báo phụ huynh · ":""}${r.t.t}</span></span></button>
- <div class="ctl"><button class="m" data-a="q" data-v="-1" data-id="${r.st.id}" aria-label="Trừ 1 điểm esc(n)">-</button><output>{r.s}</output><button class="p" data-a="q" data-v="1" data-id="${r.st.id}" aria-label="Cộng 1 điểm ${esc(n)}">+</button></div></article>`}
-
+ return `<article class="st"><button class="who" data-a="open" data-id="${r.st.id}"><span class="av" style="--h:${hue(n)}">${esc(initial(n))}</span><span style="min-width:0"><b>${esc(n)}</b><span class="badge ${r.t.tone}">${r.pa?"Báo phụ huynh · ":""}${r.t.t}</span></span></button>
+ <div class="ctl"><button class="m" data-a="q" data-v="-1" data-id="${r.st.id}" aria-label="Trừ 1 điểm ${esc(n)}">−</button><output>${r.s}</output><button class="p" data-a="q" data-v="1" data-id="${r.st.id}" aria-label="Cộng 1 điểm ${esc(n)}">+</button></div></article>`}
 
 function addLog(sid,v,why){const c=cls();const l={id:uid(),sid,v,why,d:new Date().toISOString().slice(0,10)};logs(c,S.month).push(l);return l}
-function toast(msg,undo){const t=document.getElementById("toast");t.innerHTML=`<div class="toast"><span>esc(msg)</span>{undo?`<button data-a="undo">Hoàn tác</button>`:""}</div>`;t._u=undo;clearTimeout(t._t);t._t=setTimeout(()=>t.innerHTML="",3500)}
+function toast(msg,undo){const t=document.getElementById("toast");t.innerHTML=`<div class="toast"><span>${esc(msg)}</span>${undo?`<button data-a="undo">Hoàn tác</button>`:""}</div>`;t._u=undo;clearTimeout(t._t);t._t=setTimeout(()=>t.innerHTML="",3500)}
 const dlg=document.getElementById("dlg");
-function show(title,body){dlg.innerHTML=`<div class="dh"><h3>title</h3><buttonclass="x"data-a="close"aria-label="Đóng">✕</button></div><divclass="db">{body}</div>`;if(!dlg.open)dlg.showModal()}
+function show(title,body){dlg.innerHTML=`<div class="dh"><h3>${title}</h3><button class="x" data-a="close" aria-label="Đóng">✕</button></div><div class="db">${body}</div>`;if(!dlg.open)dlg.showModal()}
 function stuSheet(id){
  const c=cls(),st=c.students.find(s=>s.id===id);if(!st)return;dlg._sid=id;
  const v=verdict(c,id,S.month),mine=(c.logs[S.month]||[]).filter(l=>l.sid===id).slice().reverse();
- const chips=(arr,k)=>arr.map(([t,p])=>`<button class="chip k"data-a="rule"data-p="{p}" data-t="esc(t)"><span>{esc(t)}</span><i>${p>0?"+"+p:p}</i></button>`).join("");
- show(esc(st.name),`<div class="big"><b>${v.s}</b><span class="badge v.t.tone">{v.pa?"Báo phụ huynh · ":""}v.t.t</span></div><pclass="hint">{mlabel(S.month)} · chạm một dòng để ghi ngay</p>
- <div class="cols"><div><h4>Cộng điểm</h4>chips(getRules().add,"a")<buttonclass="chipadd"data-a="newRule"data-k="add">+Thêmthẻcộngđiểm</button></div><div><h4>Trừđiểm</h4>{chips(getRules().sub,"s")}<button class="chip add" data-a="newRule" data-k="sub">+ Thêm thẻ trừ điểm</button></div></div><div class="row"><button class="btn" data-a="editRules">Sửa / xoá thẻ</button></div>
+ const chips=(arr,k)=>arr.map(([t,p])=>`<button class="chip ${k}" data-a="rule" data-p="${p}" data-t="${esc(t)}"><span>${esc(t)}</span><i>${p>0?"+"+p:p}</i></button>`).join("");
+ show(esc(st.name),`<div class="big"><b>${v.s}</b><span class="badge ${v.t.tone}">${v.pa?"Báo phụ huynh · ":""}${v.t.t}</span></div><p class="hint">${mlabel(S.month)} · chạm một dòng để ghi ngay</p>
+ <div class="cols"><div><h4>Cộng điểm</h4>${chips(getRules().add,"a")}<button class="chip add" data-a="newRule" data-k="add">+ Thêm thẻ cộng điểm</button></div><div><h4>Trừ điểm</h4>${chips(getRules().sub,"s")}<button class="chip add" data-a="newRule" data-k="sub">+ Thêm thẻ trừ điểm</button></div></div><div class="row"><button class="btn" data-a="editRules">Sửa / xoá thẻ</button></div>
  <h4 style="margin:14px 0 4px;font-size:13px;color:var(--mute)">Ghi tuỳ chỉnh</h4><div class="row"><input type="number" id="cp" value="1" aria-label="Số điểm (âm để trừ)"><input type="text" id="cn" placeholder="Lý do / từ vi phạm cụ thể"><button class="btn pri" data-a="custom">Ghi</button></div>
- <h4 style="margin:16px 0 0;font-size:13px;color:var(--mute)">Lịch sử tháng này</h4>${mine.length?mine.map(l=>`<div class="log"><em style="color:var(${l.v>0?"--add":"--sub"})">l.v>0?"+"+l.v:l.v</em><div>{esc(l.why)}<div class="d">l.d.split("-").reverse().join("/")</div></div><buttonclass="x"data-a="del"data-id="{l.id}" aria-label="Xoá">✕</button></div>`).join(""):`<p class="hint">Chưa có ghi chú nào.</p>`}
+ <h4 style="margin:16px 0 0;font-size:13px;color:var(--mute)">Lịch sử tháng này</h4>${mine.length?mine.map(l=>`<div class="log"><em style="color:var(${l.v>0?"--add":"--sub"})">${l.v>0?"+"+l.v:l.v}</em><div>${esc(l.why)}<div class="d">${l.d.split("-").reverse().join("/")}</div></div><button class="x" data-a="del" data-id="${l.id}" aria-label="Xoá">✕</button></div>`).join(""):`<p class="hint">Chưa có ghi chú nào.</p>`}
  <div class="row"><button class="btn danger" data-a="rmStu" data-id="${id}">Xoá học sinh</button></div>`);
 }
 function ruleEditor(){save();const R=getRules();
- const sec=(k,t)=>`<h4 style="margin:12px 0 4px;font-size:13px;color:var(--mute)">t</h4>`+R[k].map((r,i)=>`<divclass="row"><inputtype="text"class="rn"data-k="{k}" data-i="i"value="{esc(r[0])}" aria-label="Tên thẻ"><input type="number" class="rp" data-k="k"data-i="{i}" value="Math.abs(r[1])"min="1"aria-label="Sốđiểm"><buttonclass="x"data-a="delRule"data-k="{k}" data-i="${i}" aria-label="Xoá thẻ">✕</button></div>`).join("");
+ const sec=(k,t)=>`<h4 style="margin:12px 0 4px;font-size:13px;color:var(--mute)">${t}</h4>`+R[k].map((r,i)=>`<div class="row"><input type="text" class="rn" data-k="${k}" data-i="${i}" value="${esc(r[0])}" aria-label="Tên thẻ"><input type="number" class="rp" data-k="${k}" data-i="${i}" value="${Math.abs(r[1])}" min="1" aria-label="Số điểm"><button class="x" data-a="delRule" data-k="${k}" data-i="${i}" aria-label="Xoá thẻ">✕</button></div>`).join("");
  show("Sửa thẻ cộng / trừ",sec("add","Thẻ cộng điểm")+sec("sub","Thẻ trừ điểm")+`<p class="hint">Sửa trực tiếp, thay đổi được lưu ngay. Điểm đã ghi trước đó không bị đổi.</p><div class="row"><button class="btn pri" data-a="backSheet">Xong</button><button class="btn danger" data-a="resetRules">Khôi phục mặc định</button></div>`)}
 function summary(){
  const c=cls();const rows=c.students.map(st=>({st,...verdict(c,st.id,S.month)}));
  const ls=c.logs[S.month]||[];
  const body=rows.map((r,i)=>{const L=ls.filter(l=>l.sid===r.st.id);const p=L.filter(l=>l.v>0).reduce((a,l)=>a+l.v,0),m=L.filter(l=>l.v<0).reduce((a,l)=>a+l.v,0);
- return `<tr><td>i+1</td><td>{esc(r.st.name)}</td><td class="n" style="color:var(--add)">+p</td><tdclass="n"style="color:var(--sub)">{m}</td><td class="n"><b>r.s</b></td><td>{r.t.b?"+"+r.t.b+" điểm thưởng":"–"}</td><td>${r.pa?"<b style='color:var(--sub)'>Báo phụ huynh"+(r.t.run>1?" ("+r.streak+" tháng liên tiếp)":"")+"</b>":r.t.t}</td></tr>`}).join("");
- show(`Tổng kết ${mlabel(S.month).toLowerCase()} · esc(c.name)`,`<divstyle="overflow-x:auto"><table><thead><tr><th>STT</th><th>Tên</th><thclass="n">Cộng</th><thclass="n">Trừ</th><thclass="n">Điểm</th><th>Thưởng</th><th>Kếtluận</th></tr></thead><tbody>{body}</tbody></table></div>
+ return `<tr><td>${i+1}</td><td>${esc(r.st.name)}</td><td class="n" style="color:var(--add)">+${p}</td><td class="n" style="color:var(--sub)">${m}</td><td class="n"><b>${r.s}</b></td><td>${r.t.b?"+"+r.t.b+" điểm thưởng":"–"}</td><td>${r.pa?"<b style='color:var(--sub)'>Báo phụ huynh"+(r.t.run>1?" ("+r.streak+" tháng liên tiếp)":"")+"</b>":r.t.t}</td></tr>`}).join("");
+ show(`Tổng kết ${mlabel(S.month).toLowerCase()} · ${esc(c.name)}`,`<div style="overflow-x:auto"><table><thead><tr><th>STT</th><th>Tên</th><th class="n">Cộng</th><th class="n">Trừ</th><th class="n">Điểm</th><th>Thưởng</th><th>Kết luận</th></tr></thead><tbody>${body}</tbody></table></div>
  <p class="hint">Thưởng: giữ nguyên 10 → +4 · 12–14 → +8 · 15 trở lên → +12. Báo phụ huynh khi: 7–9 điểm 3 tháng liên tiếp, 3–6 điểm 2 tháng liên tiếp, hoặc dưới 3 điểm.</p>
  <div class="row noprint"><button class="btn pri" data-a="csv">Tải CSV (mở bằng Excel)</button><button class="btn" data-a="print">In</button></div>`);
 }
 function csv(){const c=cls();const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
  const out=[["STT","Tên","Điểm cộng","Điểm trừ","Tổng kết","Thưởng","Kết luận","Lỗi vi phạm"].map(q).join(",")];
  c.students.forEach((st,i)=>{const L=(c.logs[S.month]||[]).filter(l=>l.sid===st.id),v=verdict(c,st.id,S.month);
-  out.push([i+1,st.name,L.filter(l=>l.v>0).reduce((a,l)=>a+l.v,0),L.filter(l=>l.v<0).reduce((a,l)=>a+l.v,0),v.s,v.t.b,(v.pa?"Báo phụ huynh":v.t.t),L.map(l=>`${l.d.split("-").reverse().join("/")} l.v>0?"+":""{l.v} ${l.why}`).join("; ")].map(q).join(","))});
- const b=new Blob(["\ufeff"+out.join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`c.name-{S.month}.csv`;a.click();
+  out.push([i+1,st.name,L.filter(l=>l.v>0).reduce((a,l)=>a+l.v,0),L.filter(l=>l.v<0).reduce((a,l)=>a+l.v,0),v.s,v.t.b,(v.pa?"Báo phụ huynh":v.t.t),L.map(l=>`${l.d.split("-").reverse().join("/")} ${l.v>0?"+":""}${l.v} ${l.why}`).join("; ")].map(q).join(","))});
+ const b=new Blob(["\ufeff"+out.join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`${c.name}-${S.month}.csv`;a.click();
 }
-function form(title,label,ph,area,act,val=""){show(title,`<label class="hint" for="f">label</label>{area?`<textarea id="f" rows="9" placeholder="ph"></textarea>`:`<inputtype="text"id="f"value="{esc(val)}" placeholder="${ph}">`}<div class="row"><button class="btn pri" data-a="${act}">Lưu</button></div>`);setTimeout(()=>document.getElementById("f").focus(),50)}
-
+function form(title,label,ph,area,act,val=""){show(title,`<label class="hint" for="f">${label}</label>${area?`<textarea id="f" rows="9" placeholder="${ph}"></textarea>`:`<input type="text" id="f" value="${esc(val)}" placeholder="${ph}">`}<div class="row"><button class="btn pri" data-a="${act}">Lưu</button></div>`);setTimeout(()=>document.getElementById("f").focus(),50)}
 
 document.addEventListener("click",e=>{
  const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,c=cls(),d=b.dataset;
@@ -199,7 +196,7 @@ document.addEventListener("click",e=>{
  else if(a==="custom"){const p=parseInt(document.getElementById("cp").value,10);if(!p)return;addLog(dlg._sid,p,document.getElementById("cn").value.trim()||(p>0?"Cộng điểm":"Trừ điểm"));render();stuSheet(dlg._sid)}
  else if(a==="del"){c.logs[S.month]=c.logs[S.month].filter(x=>x.id!==d.id);render();stuSheet(dlg._sid)}
  else if(a==="rmStu"){if(confirm("Xoá học sinh này và toàn bộ điểm của em?")){c.students=c.students.filter(s=>s.id!==d.id);Object.values(c.logs).forEach((arr,i,all)=>{});for(const k in c.logs)c.logs[k]=c.logs[k].filter(l=>l.sid!==d.id);dlg.close();render()}}
- else if(a==="newRule"){const k=d.k;show(k==="add"?"Thẻ cộng điểm mới":"Thẻ trừ điểm mới",`<label class="hint" for="rn">Tên hành động</label><input type="text" id="rn" placeholder="Ví dụ: Giúp đỡ bạn trong lớp"><label class="hint" for="rp">Số điểm k==="add"?"đượccộng":"bịtrừ"</label><divclass="row"><inputtype="number"id="rp"min="1"value="1"><buttonclass="btnpri"data-a="saveRule"data-k="{k}">Lưu thẻ</button></div>`);setTimeout(()=>document.getElementById("rn").focus(),50)}
+ else if(a==="newRule"){const k=d.k;show(k==="add"?"Thẻ cộng điểm mới":"Thẻ trừ điểm mới",`<label class="hint" for="rn">Tên hành động</label><input type="text" id="rn" placeholder="Ví dụ: Giúp đỡ bạn trong lớp"><label class="hint" for="rp">Số điểm ${k==="add"?"được cộng":"bị trừ"}</label><div class="row"><input type="number" id="rp" min="1" value="1"><button class="btn pri" data-a="saveRule" data-k="${k}">Lưu thẻ</button></div>`);setTimeout(()=>document.getElementById("rn").focus(),50)}
  else if(a==="saveRule"){const n=document.getElementById("rn").value.trim(),p=Math.abs(parseInt(document.getElementById("rp").value,10));if(!n||!p)return;getRules()[d.k].push([n,d.k==="add"?p:-p]);render();stuSheet(dlg._sid)}
  else if(a==="editRules")ruleEditor();
  else if(a==="delRule"){getRules()[d.k].splice(+d.i,1);ruleEditor()}
@@ -222,5 +219,3 @@ render();
 </script>
 </body>
 </html>
-
-
