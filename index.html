@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sổ ghi chú lớp học</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📒</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f6;--sf:#fff;--ink:#16202e;--mu:#6b778a;--ln:#dde3ec;--ac:#4338ca;--pl:#12a150;--plb:#e3f6ea;--mi:#e5484d;--mib:#fdecec;--go:#b7791f;--gob:#fdf3d8;--r:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1520;--sf:#18202e;--ink:#e8edf5;--mu:#93a0b4;--ln:#2a3447;--ac:#8b85ff;--pl:#3ddc84;--plb:#12301f;--mi:#ff6b70;--mib:#3a1a1d;--go:#f2c14e;--gob:#3a3015}}
+*{box-sizing:border-box;margin:0}
+body{font:15px/1.5 'Be Vietnam Pro',system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:80px}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 14px}
+header{background:var(--sf);border-bottom:1px solid var(--ln);position:sticky;top:0;z-index:5}
+.top{display:flex;align-items:center;gap:10px;padding:10px 0;flex-wrap:wrap}
+.logo{font-weight:800;font-size:18px;margin-right:auto}
+.btn{padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--ln);font-weight:600;font-size:14px}
+.btn.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn.dng{color:var(--mi)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px}
+.tab{padding:7px 14px;border-radius:999px;white-space:nowrap;font-weight:600;background:var(--bg);border:1px solid var(--ln)}
+.tab.on{background:var(--ink);color:var(--sf);border-color:var(--ink)}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0}
+.bar input[type=month]{padding:8px 10px;border-radius:10px;border:1px solid var(--ln);background:var(--sf)}
+.seg{display:flex;border:1px solid var(--ln);border-radius:10px;overflow:hidden;background:var(--sf)}
+.seg button{padding:8px 14px;font-weight:600}
+.seg .on{background:var(--ac);color:#fff}
+.sp{margin-left:auto}
+.cards{position:sticky;top:104px;z-index:4;background:var(--bg);padding:8px 0;margin-bottom:8px}
+.cards h3{font-size:12px;color:var(--mu);font-weight:600;margin:6px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:7px 12px;border-radius:999px;font-size:13.5px;font-weight:600;border:2px solid transparent;display:inline-flex;gap:6px;align-items:center}
+.chip.p{background:var(--plb);color:var(--pl)}
+.chip.m{background:var(--mib);color:var(--mi)}
+.chip.sel.p{border-color:var(--pl);background:var(--pl);color:#fff}
+.chip.sel.m{border-color:var(--mi);background:var(--mi);color:#fff}
+.chip b{font-weight:800}
+.chip .x{opacity:.6;padding:0 2px}
+.chip.new{background:var(--sf);border:2px dashed var(--ln);color:var(--mu)}
+.hint{font-size:13px;color:var(--mu);margin:6px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.st{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:12px;text-align:left;display:flex;flex-direction:column;gap:2px;position:relative;min-height:104px}
+.st:active{transform:scale(.97)}
+.st .nm{font-weight:700;padding-right:26px;word-break:break-word}
+.st .sc{font-size:34px;font-weight:800;line-height:1.1;margin-top:auto}
+.st .df{font-size:12.5px;color:var(--mu)}
+.st .i{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:8px;background:var(--bg);font-size:14px}
+.st.hot{outline:2px solid var(--ac)}
+.s-hi{color:var(--pl)}.s-lo{color:var(--mi)}
+.empty{text-align:center;padding:50px 16px;color:var(--mu);background:var(--sf);border:2px dashed var(--ln);border-radius:var(--r)}
+.empty h2{color:var(--ink);margin-bottom:6px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.tile{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:12px}
+.tile b{display:block;font-size:26px;font-weight:800}
+.tile span{font-size:13px;color:var(--mu)}
+.tw{overflow-x:auto;background:var(--sf);border:1px solid var(--ln);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--ln)}
+th{font-size:13px;color:var(--mu);font-weight:600}
+tr:last-child td{border:0}
+.tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700}
+.t-gold{background:var(--gob);color:var(--go)}.t-ok{background:var(--plb);color:var(--pl)}
+.t-warn{background:var(--gob);color:var(--go)}.t-bad{background:var(--mib);color:var(--mi)}
+.note{font-size:12.5px;color:var(--mu);margin-top:2px}
+dialog{border:0;border-radius:18px;padding:0;width:min(560px,94vw);max-height:90vh;background:var(--sf);color:var(--ink);box-shadow:0 20px 60px #0006}
+dialog::backdrop{background:#0008}
+.dg{padding:18px;display:flex;flex-direction:column;gap:12px}
+.dg h2{font-size:19px}
+.dg label{font-size:13px;font-weight:600;color:var(--mu);display:block;margin-bottom:3px}
+.dg input,.dg textarea,.dg select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--ln);background:var(--bg)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1}
+.log{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);font-size:14px}
+.log .pt{font-weight:800;min-width:30px}
+.log small{color:var(--mu);display:block}
+.log div{flex:1}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--sf);padding:10px 16px;border-radius:12px;display:flex;gap:14px;align-items:center;z-index:20;box-shadow:0 8px 30px #0005;max-width:92vw}
+.toast button{color:var(--go);font-weight:700}
+.ro{background:var(--gob);color:var(--go);text-align:center;padding:8px;font-weight:600;font-size:14px}
+@media print{header,.bar,.cards,.toast,.noprint{display:none!important}body{background:#fff}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<dialog id="dlg"></dialog>
+<script>
+const KEY='so-ghi-chu-v1',BASE=10;
+const DEF=[
+{id:'p1',n:'Làm bài tập đầy đủ 2 buổi/tuần',p:1},{id:'p2',n:'Giữ trật tự cả tuần',p:2},
+{id:'p3',n:'Từ vựng & ngữ pháp đều trên 8',p:2},{id:'p4',n:'Giơ tay phát biểu đúng',p:1},
+{id:'p5',n:'Bài làm xuất sắc nhất tuần',p:1},{id:'m1',n:'Không làm bài tập về nhà',p:-1},
+{id:'m2',n:'Gây ồn ảnh hưởng cả lớp',p:-2},{id:'m3',n:'Nói chuyện riêng (nhắc >3 lần)',p:-1},
+{id:'m4',n:'Dùng điện thoại không xin phép (-1)',p:-1},{id:'m5',n:'Dùng điện thoại không xin phép (-2)',p:-2},
+{id:'m6',n:'Chửi thề / nói tục',p:-1},{id:'m7',n:'Giảng viên nhắc nhở',p:-1},
+{id:'m8',n:'Đánh nhau / chạy nhảy',p:-2},{id:'m9',n:'Học môn khác (nhắc >3 lần)',p:-1}];
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ym=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+const prevM=m=>{let[y,n]=m.split('-').map(Number);n--;if(!n){n=12;y--}return y+'-'+String(n).padStart(2,'0')};
+const CLOUD=location.hostname.endsWith('.github.io');
+let seg=location.pathname.split('/')[1]||'';if(!seg||/\./.test(seg))seg=location.hostname;
+const GH={o:location.hostname.split('.')[0],r:seg,b:'data',f:'so-ghi-chu.json'};
+let user=CLOUD?localStorage.getItem('so-tok'):null,RO=CLOUD&&!user,sha=null,lastJson='',tm=null,busy=false,dirty=false,db={classes:[],customs:[],cls:null,month:ym(new Date()),view:'score'},sel=null,lastLog=null;
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.classes)db={...db,...s}}catch(e){}
+const save=()=>{if(!RO){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('Không lưu được vào trình duyệt!')}push()}};
+function setSt(t){window._st=t;const e=$('#cs');if(e)e.textContent=t}
+const api=(p,o={})=>fetch('https://api.github.com/repos/'+GH.o+'/'+GH.r+p,{...o,headers:{Accept:'application/vnd.github+json',...(user?{Authorization:'Bearer '+user}:{})}});
+const b64=t=>{let x='';new TextEncoder().encode(t).forEach(c=>x+=String.fromCharCode(c));return btoa(x)};
+const unb64=t=>new TextDecoder().decode(Uint8Array.from(atob(t.replace(/\s/g,'')),c=>c.charCodeAt(0)));
+async function pull(){try{let txt=null;
+ if(user){const r=await api('/contents/'+GH.f+'?ref='+GH.b);if(r.ok){const j=await r.json();sha=j.sha;txt=unb64(j.content)}else if(r.status!=404)throw 0}
+ else{const r=await fetch('https://raw.githubusercontent.com/'+GH.o+'/'+GH.r+'/'+GH.b+'/'+GH.f+'?t='+Date.now());if(r.ok)txt=await r.text()}
+ if(txt&&txt!==lastJson){const o=JSON.parse(txt);lastJson=txt;db.classes=o.classes||[];db.customs=o.customs||[];render()}
+ else if(!txt&&user&&db.classes.length){lastJson='';push()}
+}catch(e){setSt('⚠ Không tải được dữ liệu')}}
+function push(){if(CLOUD&&user){clearTimeout(tm);tm=setTimeout(send,1500)}}
+async function branchOk(){if((await api('/branches/'+GH.b)).ok)return true;
+ const d=(await(await api('')).json()).default_branch,rf=await(await api('/git/ref/heads/'+d)).json();
+ return(await api('/git/refs',{method:'POST',body:JSON.stringify({ref:'refs/heads/'+GH.b,sha:rf.object.sha})})).ok}
+const put=(json)=>api('/contents/'+GH.f,{method:'PUT',body:JSON.stringify({message:'Cập nhật sổ ghi chú',content:b64(json),branch:GH.b,...(sha?{sha}:{})})});
+async function send(){const json=JSON.stringify({classes:db.classes,customs:db.customs});if(json===lastJson)return;
+ if(busy){dirty=true;return}busy=true;setSt('☁ Đang lưu...');
+ try{if(!sha&&!(await branchOk()))throw new Error('không tạo được nhánh dữ liệu');
+  let r=await put(json);
+  if(r.status==409||r.status==422){const g=await api('/contents/'+GH.f+'?ref='+GH.b);if(g.ok){const j=await g.json();
+   if(unb64(j.content)!==lastJson&&!confirm('Dữ liệu trên GitHub vừa được sửa ở nơi khác. Ghi đè bằng dữ liệu của máy này?')){busy=false;return pull()}
+   sha=j.sha;r=await put(json)}}
+  if(!r.ok)throw new Error(r.status==401?'token sai hoặc hết hạn':(r.status==403||r.status==404)?'token chưa có quyền Contents: Read and write':r.status);
+  sha=(await r.json()).content.sha;lastJson=json;setSt('☁ Đã lưu lên GitHub')
+ }catch(e){setSt('⚠ Lưu thất bại');toast('Lưu thất bại: '+e.message)}
+ busy=false;if(dirty){dirty=false;send()}}
+const acts=()=>DEF.concat(db.customs);
+const cur=()=>db.classes.find(c=>c.id===db.cls)||db.classes[0];
+const logs=(c,s,m)=>c.logs.filter(l=>l.s===s&&(!m||l.m===m));
+const score=(c,s,m)=>BASE+logs(c,s,m).reduce((a,l)=>a+l.p,0);
+function tier(t){
+ if(t>=15)return{k:'gold',n:'Xuất sắc',r:'+12 điểm cộng',c:'t-gold'};
+ if(t>=12)return{k:'good',n:'Tốt',r:'+8 điểm cộng',c:'t-ok'};
+ if(t>=10)return{k:'keep',n:t==10?'Giữ nguyên':'Tăng nhẹ',r:'+4 điểm cộng',c:'t-ok'};
+ if(t>=7)return{k:'w1',n:'Nhắc nhở',r:'Nhắc điều chỉnh lỗi',c:'t-warn',run:3};
+ if(t>=3)return{k:'w2',n:'Cần xử lý',r:'Tìm biện pháp xử lý',c:'t-bad',run:2};
+ return{k:'w3',n:'Báo phụ huynh',r:'Báo phụ huynh ngay',c:'t-bad'}}
+function verdict(c,s,m){
+ const t=tier(score(c,s,m));let note='';
+ if(t.run){let n=1,p=m;while(n<t.run){p=prevM(p);if(tier(score(c,s,p)).k!==t.k)break;n++}
+  if(n>=t.run)return{...t,r:'Báo phụ huynh (liên tiếp '+n+' tháng)',c:'t-bad'};
+  if(n>1)note=n+' tháng liên tiếp — còn '+(t.run-n)+' tháng nữa báo phụ huynh'}
+ return{...t,note}}
+/* ---------- Giao diện ---------- */
+function render(){
+ const c=cur(),A=$('#app');if(c)db.cls=c.id;
+ let h=(RO?(CLOUD?'<div class="ro">Chế độ chỉ xem · điểm được cập nhật trực tiếp từ chủ sổ.</div>':'<div class="ro">Bạn đang xem bản chia sẻ (chỉ xem). <button class="btn" data-a="clone">Lưu bản sao vào máy tôi</button></div>'):'')+
+ `<header><div class="wrap"><div class="top"><div class="logo">📒 Sổ ghi chú lớp học</div>
+ ${CLOUD&&!user?'<button class="btn" data-a="login">🔐 Chủ sổ đăng nhập</button>':''}${CLOUD&&user?`<span class="hint" id="cs">${window._st||''}</span>`:''}${RO?'':'<button class="btn" data-a="share">🔗 Chia sẻ</button><button class="btn" data-a="data">💾 Sao lưu</button>'}${CLOUD&&user?'<button class="btn" data-a="logout">Đăng xuất</button>':''}</div>
+ <div class="tabs">${db.classes.map(x=>`<button class="tab ${x.id===db.cls?'on':''}" data-a="tab" data-id="${x.id}">${esc(x.name)}</button>`).join('')}${RO?'':'<button class="tab" data-a="addClass">+ Thêm lớp</button>'}</div></div></header><main class="wrap">`;
+ if(!c){h+=`<div class="bar"></div><div class="empty"><h2>Chưa có lớp nào</h2><p>Bấm “+ Thêm lớp” để tạo lớp đầu tiên, ví dụ T-LV2-JL1.</p></div>`}
+ else{
+  h+=`<div class="bar"><input type="month" id="mo" value="${db.month}" aria-label="Chọn tháng">
+  <div class="seg"><button class="${db.view=='score'?'on':''}" data-a="view" data-v="score">Chấm điểm</button><button class="${db.view=='stat'?'on':''}" data-a="view" data-v="stat">Thống kê</button></div>
+  ${RO?'':'<span class="sp"></span><button class="btn" data-a="addStu">+ Thêm học sinh</button><button class="btn" data-a="clsMenu">⚙ Lớp</button>'}</div>`;
+  h+=db.view=='score'?scoreView(c):statView(c)}
+ A.innerHTML=h+'</main>';
+ const mo=$('#mo');if(mo)mo.onchange=()=>{db.month=mo.value||db.month;save();render()}}
+function chip(a){const x=!RO&&!DEF.includes(a)?`<span class="x" data-a="delCard" data-id="${a.id}" title="Xóa thẻ">✕</span>`:'';
+ return`<span class="chip ${a.p>0?'p':'m'} ${sel===a.id?'sel':''}" ${RO?'':`role="button" tabindex="0" data-a="pick" data-id="${a.id}"`}>${esc(a.n)} <b>${a.p>0?'+':''}${a.p}</b>${x}</span>`}
+function scoreView(c){
+ const all=acts(),pl=all.filter(a=>a.p>0),mi=all.filter(a=>a.p<0);
+ let h='';
+ if(!RO)h+=`<div class="cards"><h3>1. Chọn thẻ  →  2. Chạm vào học sinh để cộng/trừ ngay</h3>
+ <div class="chips">${pl.map(chip).join('')}<button class="chip new" data-a="newCard" data-t="1">+ Thẻ cộng</button></div>
+ <div class="chips" style="margin-top:6px">${mi.map(chip).join('')}<button class="chip new" data-a="newCard" data-t="-1">+ Thẻ trừ</button></div></div>
+ <p class="hint">${sel?'Đang chọn: <b>'+esc(all.find(a=>a.id===sel)?.n||'')+'</b>. Chạm lại thẻ để bỏ chọn.':'Chưa chọn thẻ: chạm học sinh để mở chi tiết.'}</p>`;
+ if(!c.students.length)return h+`<div class="empty"><h2>Lớp chưa có học sinh</h2><p>Bấm “+ Thêm học sinh”, dán cả danh sách (mỗi dòng một tên).</p></div>`;
+ return h+`<div class="grid">${c.students.map(s=>{const sc=score(c,s.id,db.month),n=logs(c,s.id,db.month).length;
+ return`<button class="st ${sel&&!RO?'hot':''}" data-a="hit" data-id="${s.id}"><span class="nm">${esc(s.name)}</span>
+ <span class="sc ${sc>BASE?'s-hi':sc<BASE?'s-lo':''}">${sc}</span><span class="df">${sc-BASE>0?'+':''}${sc-BASE} · ${n} ghi chú</span>
+ <span class="i" data-a="open" data-id="${s.id}" role="button" aria-label="Chi tiết">☰</span></button>`}).join('')}</div>`}
+function statView(c){
+ const rows=c.students.map(s=>{const L=logs(c,s.id,db.month);return{s,L,sc:score(c,s.id,db.month),pl:L.filter(l=>l.p>0).reduce((a,l)=>a+l.p,0),mi:L.filter(l=>l.p<0).reduce((a,l)=>a+l.p,0),v:verdict(c,s.id,db.month)}}).sort((a,b)=>b.sc-a.sc);
+ if(!rows.length)return'<div class="empty"><h2>Chưa có dữ liệu</h2></div>';
+ const avg=(rows.reduce((a,r)=>a+r.sc,0)/rows.length).toFixed(1),ph=rows.filter(r=>r.v.c=='t-bad').length,bonus=rows.filter(r=>r.sc>=10).length;
+ return`<div class="tiles"><div class="tile"><b>${rows.length}</b><span>học sinh</span></div><div class="tile"><b>${avg}</b><span>điểm trung bình</span></div>
+ <div class="tile"><b class="s-hi">${bonus}</b><span>được điểm cộng</span></div><div class="tile"><b class="s-lo">${ph}</b><span>cần báo phụ huynh / xử lý</span></div></div>
+ <div class="tw"><table><tr><th>#</th><th>Học sinh</th><th>Cộng</th><th>Trừ</th><th>Tổng kết</th><th>Kết quả tháng</th></tr>
+ ${rows.map((r,i)=>`<tr><td>${i+1}</td><td><b>${esc(r.s.name)}</b></td><td class="s-hi">+${r.pl}</td><td class="s-lo">${r.mi}</td><td><b>${r.sc}</b></td>
+ <td><span class="tag ${r.v.c}">${r.v.n}</span> ${esc(r.v.r)}${r.v.note?`<div class="note">${esc(r.v.note)}</div>`:''}</td></tr>`).join('')}</table></div>
+ <div class="row noprint" style="margin-top:12px;justify-content:flex-end"><button class="btn" data-a="csv">⬇ Tải Excel (CSV)</button><button class="btn" onclick="print()">🖨 In bảng</button></div>
+ <p class="hint">Quy tắc: mỗi tháng mỗi học sinh có ${BASE} điểm. 10–11 → +4 · 12–14 → +8 · 15 trở lên → +12 · 7–9 → nhắc nhở (3 tháng liền → báo PH) · 3–6 → xử lý (2 tháng liền → báo PH) · dưới 3 → báo PH.</p>`}
+/* ---------- Hộp thoại ---------- */
+const dlg=$('#dlg');
+const show=h=>{dlg.innerHTML='<div class="dg">'+h+'</div>';if(!dlg.open)dlg.showModal()};
+dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+function toast(t,undo){document.querySelector('.toast')?.remove();const d=document.createElement('div');d.className='toast';d.innerHTML=`<span>${esc(t)}</span>${undo?'<button data-a="undo">Hoàn tác</button>':''}`;document.body.append(d);setTimeout(()=>d.remove(),4000)}
+function addLog(c,sid,a,note){const l={id:uid(),s:sid,m:db.month,l:a.n,p:a.p,d:new Date().toISOString(),n:note||''};c.logs.push(l);lastLog=l.id;save()}
+function detail(sid){const c=cur(),s=c.students.find(x=>x.id===sid);if(!s)return;const L=logs(c,sid,db.month).reverse(),sc=score(c,sid,db.month);
+ show(`<div class="row" style="align-items:center"><h2>${esc(s.name)}</h2><b class="sc ${sc>BASE?'s-hi':sc<BASE?'s-lo':''}" style="font-size:30px;text-align:right">${sc} điểm</b></div>
+ ${RO?'':`<div><label>Ghi chú (không bắt buộc, ví dụ từ nhạy cảm đã dùng)</label><input id="nt" placeholder="Nhập ghi chú rồi bấm thẻ bên dưới"></div>
+ <div class="chips">${acts().map(a=>`<button class="chip ${a.p>0?'p':'m'}" data-a="apply" data-id="${sid}" data-aid="${a.id}">${esc(a.n)} <b>${a.p>0?'+':''}${a.p}</b></button>`).join('')}</div>`}
+ <div><label>Lịch sử tháng ${db.month}</label>${L.length?L.map(l=>`<div class="log"><span class="pt ${l.p>0?'s-hi':'s-lo'}">${l.p>0?'+':''}${l.p}</span><div>${esc(l.l)}${l.n?`<small>${esc(l.n)}</small>`:''}<small>${new Date(l.d).toLocaleDateString('vi-VN')}</small></div>${RO?'':`<button class="btn dng" data-a="delLog" data-id="${l.id}" data-sid="${sid}">Xóa</button>`}</div>`).join(''):'<p class="hint">Chưa có ghi chú nào.</p>'}</div>
+ <div class="row">${RO?'':`<button class="btn" data-a="renStu" data-id="${sid}">Đổi tên</button><button class="btn dng" data-a="delStu" data-id="${sid}">Xóa học sinh</button>`}<button class="btn pri" onclick="dlg.close()">Xong</button></div>`)}
+/* ---------- Dữ liệu chia sẻ / sao lưu ---------- */
+async function enc(o){const s=new Blob([JSON.stringify(o)]).stream().pipeThrough(new CompressionStream('gzip'));let t='';new Uint8Array(await new Response(s).arrayBuffer()).forEach(x=>t+=String.fromCharCode(x));return btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+async function dec(t){const b=Uint8Array.from(atob(t.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));return JSON.parse(await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
+const dl=(name,txt,type)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;a.click()};
+/* ---------- Hành động ---------- */
+const A={
+ tab:d=>{db.cls=d.id;save();render()},
+ view:d=>{db.view=d.v;save();render()},
+ pick:d=>{sel=sel===d.id?null:d.id;render()},
+ hit:(d,e)=>{if(e.target.closest('.i'))return;const c=cur();if(sel&&!RO){const a=acts().find(x=>x.id===sel);if(!a){sel=null;return render()}addLog(c,d.id,a);render();toast((c.students.find(s=>s.id===d.id).name)+': '+(a.p>0?'+':'')+a.p+' · '+a.n,1)}else detail(d.id)},
+ open:d=>detail(d.id),
+ apply:d=>{const c=cur(),a=acts().find(x=>x.id===d.aid);addLog(c,d.id,a,$('#nt').value.trim());render();detail(d.id)},
+ undo:()=>{const c=cur();c.logs=c.logs.filter(l=>l.id!==lastLog);save();render();document.querySelector('.toast')?.remove()},
+ delLog:d=>{const c=cur();c.logs=c.logs.filter(l=>l.id!==d.id);save();render();detail(d.sid)},
+ addClass:()=>show(`<h2>Thêm lớp mới</h2><div><label>Tên lớp</label><input id="v" placeholder="Ví dụ: T-LV2-JL1" autofocus></div><div><label>Danh sách học sinh (mỗi dòng một tên, có thể bỏ trống)</label><textarea id="v2" rows="6"></textarea></div><div class="row"><button class="btn" onclick="dlg.close()">Hủy</button><button class="btn pri" data-a="okClass">Tạo lớp</button></div>`),
+ okClass:()=>{const n=$('#v').value.trim();if(!n)return $('#v').focus();const c={id:uid(),name:n,students:[],logs:[]};$('#v2').value.split('\n').map(x=>x.trim()).filter(Boolean).forEach(x=>c.students.push({id:uid(),name:x}));db.classes.push(c);db.cls=c.id;save();dlg.close();render()},
+ clsMenu:()=>show(`<h2>Lớp ${esc(cur().name)}</h2><div class="row"><button class="btn" data-a="renClass">Đổi tên lớp</button><button class="btn dng" data-a="delClass">Xóa lớp</button></div><button class="btn pri" onclick="dlg.close()">Đóng</button>`),
+ renClass:()=>{const n=prompt('Tên lớp mới:',cur().name);if(n&&n.trim()){cur().name=n.trim();save();dlg.close();render()}},
+ delClass:()=>{if(confirm('Xóa lớp '+cur().name+' và toàn bộ điểm? Không thể khôi phục.')){db.classes=db.classes.filter(c=>c!==cur());db.cls=null;save();dlg.close();render()}},
+ addStu:()=>show(`<h2>Thêm học sinh</h2><div><label>Mỗi dòng một tên — dán cả danh sách cũng được</label><textarea id="v" rows="8" autofocus></textarea></div><div class="row"><button class="btn" onclick="dlg.close()">Hủy</button><button class="btn pri" data-a="okStu">Thêm</button></div>`),
+ okStu:()=>{$('#v').value.split('\n').map(x=>x.trim()).filter(Boolean).forEach(x=>cur().students.push({id:uid(),name:x}));save();dlg.close();render()},
+ renStu:d=>{const s=cur().students.find(x=>x.id===d.id),n=prompt('Tên mới:',s.name);if(n&&n.trim()){s.name=n.trim();save();render();detail(d.id)}},
+ delStu:d=>{if(confirm('Xóa học sinh này và toàn bộ điểm?')){const c=cur();c.students=c.students.filter(s=>s.id!==d.id);c.logs=c.logs.filter(l=>l.s!==d.id);save();dlg.close();render()}},
+ newCard:d=>show(`<h2>Thẻ ${d.t>0?'cộng':'trừ'} điểm mới</h2><div><label>Tên hành động</label><input id="v" placeholder="${d.t>0?'Ví dụ: Giúp bạn học bài':'Ví dụ: Đi học muộn'}" autofocus></div><div><label>Số điểm</label><input id="v2" type="number" min="1" max="10" value="1"></div><div class="row"><button class="btn" onclick="dlg.close()">Hủy</button><button class="btn pri" data-a="okCard" data-t="${d.t}">Lưu thẻ</button></div>`),
+ okCard:d=>{const n=$('#v').value.trim(),p=Math.abs(+$('#v2').value)||1;if(!n)return $('#v').focus();db.customs.push({id:uid(),n,p:p*d.t});save();dlg.close();render()},
+ delCard:d=>{if(confirm('Xóa thẻ này? (Điểm đã ghi trước đó vẫn giữ nguyên)')){db.customs=db.customs.filter(a=>a.id!==d.id);if(sel===d.id)sel=null;save();render()}},
+ csv:()=>{const c=cur();let t='\ufeffHọc sinh,Điểm cộng,Điểm trừ,Tổng kết,Kết quả\n';c.students.forEach(s=>{const L=logs(c,s.id,db.month);t+=`"${s.name}",${L.filter(l=>l.p>0).reduce((a,l)=>a+l.p,0)},${L.filter(l=>l.p<0).reduce((a,l)=>a+l.p,0)},${score(c,s.id,db.month)},"${verdict(c,s.id,db.month).r}"\n`});dl(c.name+'-'+db.month+'.csv',t,'text/csv')},
+ login:()=>show(`<h2>Đăng nhập chủ sổ</h2><div><label>Mã truy cập GitHub (token)</label><input id="pw" type="password" placeholder="github_pat_..." autocomplete="off" autofocus></div><p class="hint">Kho dữ liệu: ${esc(GH.o+'/'+GH.r)}. Token chỉ lưu trong trình duyệt này.</p><p class="hint" id="er" style="color:var(--mi)"></p><div class="row"><button class="btn" onclick="dlg.close()">Hủy</button><button class="btn pri" data-a="okLogin">Đăng nhập</button></div>`),
+ okLogin:async()=>{const t=$('#pw').value.trim();if(!t)return;user=t;const r=await api('');
+  if(!r.ok){user=null;return $('#er').textContent='Token không đúng hoặc không có quyền với '+GH.o+'/'+GH.r+'.'}
+  const j=await r.json();if(j.permissions&&!j.permissions.push){user=null;return $('#er').textContent='Token chưa có quyền ghi (Contents: Read and write).'}
+  localStorage.setItem('so-tok',t);RO=false;dlg.close();await pull();setSt('☁ Đã kết nối');render()},
+ logout:()=>{localStorage.removeItem('so-tok');user=null;RO=true;sha=null;render()},
+ share:async()=>{if(CLOUD)return show(`<h2>Chia sẻ cho mọi người</h2><p class="hint">Gửi link này cho bất kỳ ai. Họ mở ra là thấy điểm mới nhất và tự cập nhật khi bạn chỉnh sửa, nhưng không sửa được.</p><textarea id="lk" rows="2" readonly>${location.origin+location.pathname}</textarea><div class="row"><button class="btn pri" data-a="copy">Sao chép link</button><button class="btn" onclick="dlg.close()">Đóng</button></div>`);try{const t=await enc({classes:db.classes,customs:db.customs}),u=location.origin+location.pathname+'#d='+t;
+  show(`<h2>Chia sẻ để người khác xem</h2><p class="hint">Người nhận mở link sẽ thấy toàn bộ lớp và điểm (chỉ xem, không sửa được). Link là ảnh chụp dữ liệu tại thời điểm này — khi bạn cập nhật điểm, hãy bấm Chia sẻ lại để lấy link mới.</p><textarea id="lk" rows="4" readonly>${u}</textarea><div class="row"><button class="btn pri" data-a="copy">Sao chép link</button><button class="btn" onclick="dlg.close()">Đóng</button></div>`)}catch(e){toast('Trình duyệt chưa hỗ trợ tạo link. Hãy dùng Sao lưu.')}},
+ copy:()=>{$('#lk').select();navigator.clipboard?.writeText($('#lk').value);toast('Đã sao chép link')},
+ data:()=>show(`<h2>Sao lưu & khôi phục</h2><p class="hint">${CLOUD?'Dữ liệu đã được lưu trực tuyến. File sao lưu chỉ là bản dự phòng thêm.':'Dữ liệu tự lưu trong trình duyệt này. Hãy tải file sao lưu thường xuyên (mỗi tháng một lần) để không bao giờ mất dữ liệu.'}</p><div class="row"><button class="btn pri" data-a="exp">⬇ Tải file sao lưu</button><label class="btn" style="text-align:center;margin:0">⬆ Khôi phục từ file<input type="file" accept=".json" id="fi" hidden></label></div><button class="btn" onclick="dlg.close()">Đóng</button>`),
+ exp:()=>dl('so-ghi-chu-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(db),'application/json'),
+ clone:()=>{if(confirm('Lưu bản sao này vào máy bạn? (Sẽ thay dữ liệu hiện có trong trình duyệt này)')){RO=false;history.replaceState(null,'',location.pathname);save();render()}}
+};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&A[b.dataset.a])A[b.dataset.a]({...b.dataset},e)});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.id=='pw')A.okLogin();if((e.key=='Enter'||e.key==' ')&&e.target.matches('.chip[data-a]')){e.preventDefault();e.target.click()}});
+document.addEventListener('change',e=>{if(e.target.id!=='fi')return;const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(!o.classes)throw 0;if(confirm('Thay toàn bộ dữ liệu hiện tại bằng file này?')){db={...db,...o};save();dlg.close();render()}}catch(x){toast('File không hợp lệ')}})});
+(async()=>{if(CLOUD){await pull();if(user)setSt('☁ Đã kết nối');setInterval(()=>{if(RO&&!document.hidden)pull()},45000)}
+ else if(location.hash.startsWith('#d=')){try{const o=await dec(location.hash.slice(3));db={...db,classes:o.classes||[],customs:o.customs||[],cls:null,view:'stat'};RO=true}catch(e){}}
+ navigator.storage?.persist?.();render()})();
+</script>
+</body>
+</html>
